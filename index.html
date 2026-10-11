@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Pelajaran X DKV 3 - Deep Sky Theme</title>
+    <title>Jadwal Pelajaran X DKV 3 - Real-Time Sky Theme</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -195,7 +195,7 @@
             font-weight: 500;
         }
 
-        /* Styling Running Text (Diperhalus & Diperlambat jadi 20s) */
+        /* Styling Running Text */
         .running-text-container {
             background: rgba(10, 17, 43, 0.4);
             border: 1px solid rgba(76, 201, 240, 0.1);
@@ -222,7 +222,7 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Tab Hari */
+        /* Indikator Hari Real-Time (Non-klik / Disabled) */
         .day-tabs {
             display: flex;
             justify-content: space-between;
@@ -232,7 +232,6 @@
             padding: 6px;
             border-radius: 12px;
             border: 1px solid rgba(76, 201, 240, 0.1);
-            overflow-x: auto;
         }
 
         .tab-btn {
@@ -244,16 +243,18 @@
             font-weight: 600;
             padding: 8px 2px;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             text-align: center;
             white-space: nowrap;
+            cursor: default;
+            opacity: 0.5;
         }
 
-        .tab-btn.active, .tab-btn:hover {
+        .tab-btn.active {
             background: var(--accent-blue);
             color: #070f2b;
             box-shadow: 0 0 12px var(--accent-glow);
+            opacity: 1;
+            font-weight: 700;
         }
 
         /* Konten Jadwal */
@@ -326,34 +327,79 @@
         /* Tampilan Hari Libur */
         .holiday-box {
             text-align: center;
-            padding: 40px 20px;
+            padding: 25px 20px;
             background: rgba(27, 42, 86, 0.3);
             border: 1px dashed rgba(76, 201, 240, 0.2);
             border-radius: 16px;
+            margin-bottom: 15px;
         }
 
         .holiday-box i {
-            font-size: 36px;
+            font-size: 32px;
             color: var(--accent-blue);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             filter: drop-shadow(0 0 8px var(--accent-glow));
         }
 
         .holiday-box h3 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-main);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .holiday-box p {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-muted);
+        }
+
+        /* Kotak Mata Pelajaran Besok Senin */
+        .spoiler-box {
+            background: rgba(10, 17, 43, 0.6);
+            border: 1px solid var(--accent-blue);
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 0 12px rgba(76, 201, 240, 0.15);
+        }
+
+        .spoiler-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .spoiler-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .spoiler-item {
+            font-size: 12px;
+            color: var(--text-main);
+            background: rgba(27, 42, 86, 0.4);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .spoiler-item span:first-child {
+            color: var(--accent-blue);
+            font-weight: 600;
         }
 
         /* Watermark */
         .footer-watermark {
-            margin-top: 30px;
+            margin-top: 25px;
             text-align: center;
             font-size: 11.5px;
             color: var(--text-muted);
@@ -393,15 +439,15 @@
             <div class="running-text" id="runningText">✨ SEMANGAT DIKEYYY ✨ JANGAN LUPA BERDOA DAN BAHAGIA HARI INI ✨</div>
         </div>
 
-        <!-- Tombol Pilihan Hari -->
+        <!-- Indikator Hari Real-Time (Otomatis & Terkunci) -->
         <div class="day-tabs">
-            <button class="tab-btn" onclick="switchDay('senin', this)">Senin</button>
-            <button class="tab-btn" onclick="switchDay('selasa', this)">Selasa</button>
-            <button class="tab-btn" onclick="switchDay('rabu', this)">Rabu</button>
-            <button class="tab-btn" onclick="switchDay('kamis', this)">Kamis</button>
-            <button class="tab-btn" onclick="switchDay('jumat', this)">Jumat</button>
-            <button class="tab-btn" onclick="switchDay('sabtu', this)">Sabtu</button>
-            <button class="tab-btn" onclick="switchDay('minggu', this)">Minggu</button>
+            <button class="tab-btn" id="btn-senin">Senin</button>
+            <button class="tab-btn" id="btn-selasa">Selasa</button>
+            <button class="tab-btn" id="btn-rabu">Rabu</button>
+            <button class="tab-btn" id="btn-kamis">Kamis</button>
+            <button class="tab-btn" id="btn-jumat">Jumat</button>
+            <button class="tab-btn" id="btn-sabtu">Sabtu</button>
+            <button class="tab-btn" id="btn-minggu">Minggu</button>
         </div>
 
         <!-- SENIN -->
@@ -542,6 +588,17 @@
                 <h3>Hari Sabtu</h3>
                 <p>Selamat menikmati hari libur!</p>
             </div>
+            <!-- Mata Pelajaran Senin Besok -->
+            <div class="spoiler-box">
+                <div class="spoiler-title"><i class="fa-solid fa-calendar-days"></i> Mata Pelajaran Besok Senin</div>
+                <div class="spoiler-list">
+                    <div class="spoiler-item"><span>07.00 - 07.40</span> <span>Upacara</span></div>
+                    <div class="spoiler-item"><span>07.40 - 10.15</span> <span>Dasar-Dasar Keahlian</span></div>
+                    <div class="spoiler-item"><span>10.30 - 11.50</span> <span>Dasar-Dasar Keahlian</span></div>
+                    <div class="spoiler-item"><span>11.50 - 13.10</span> <span>Sejarah</span></div>
+                    <div class="spoiler-item"><span>13.40 - 15.00</span> <span>Pendidikan Pancasila</span></div>
+                </div>
+            </div>
         </div>
 
         <!-- MINGGU -->
@@ -551,6 +608,17 @@
                 <h3>Hari Minggu</h3>
                 <p>Selamat menikmati hari libur!</p>
             </div>
+            <!-- Mata Pelajaran Senin Besok -->
+            <div class="spoiler-box">
+                <div class="spoiler-title"><i class="fa-solid fa-calendar-days"></i> Mata Pelajaran Besok Senin</div>
+                <div class="spoiler-list">
+                    <div class="spoiler-item"><span>07.00 - 07.40</span> <span>Upacara</span></div>
+                    <div class="spoiler-item"><span>07.40 - 10.15</span> <span>Dasar-Dasar Keahlian</span></div>
+                    <div class="spoiler-item"><span>10.30 - 11.50</span> <span>Dasar-Dasar Keahlian</span></div>
+                    <div class="spoiler-item"><span>11.50 - 13.10</span> <span>Sejarah</span></div>
+                    <div class="spoiler-item"><span>13.40 - 15.00</span> <span>Pendidikan Pancasila</span></div>
+                </div>
+            </div>
         </div>
 
         <!-- Watermark -->
@@ -559,19 +627,22 @@
         </div>
     </div>
 
-    <!-- Script JavaScript -->
+    <!-- Script JavaScript Real-Time Otomatis -->
     <script>
         function updateRealTime() {
             const now = new Date();
             
+            // Jam Digital
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
 
+            // Tanggal
             const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
             document.getElementById('dateDisplay').textContent = now.toLocaleDateString('id-ID', options);
 
+            // Jam Analog
             const secDeg = (now.getSeconds() / 60) * 360;
             const minDeg = ((now.getMinutes() + now.getSeconds() / 60) / 60) * 360;
             const hourDeg = ((now.getHours() % 12 + now.getMinutes() / 60) / 12) * 360;
@@ -584,42 +655,30 @@
         setInterval(updateRealTime, 1000);
         updateRealTime();
 
-        // Update Running Text Sesuai Hari
-        function updateRunningText(dayId) {
-            const textElement = document.getElementById('runningText');
-            if (dayId === 'sabtu' || dayId === 'minggu') {
-                textElement.textContent = "✨ CIE DIKEY LIBUR ISTIRAHAT YA JAGA KESEHATAN - KALO SEKARANG ADA KEGIATAN SEMANGAT YA JANGAN LUPA MAKAN MINUM GUD LUCKK ✨";
-            } else {
-                textElement.textContent = "✨ SEMANGAT DIKEYYY ✨ JANGAN LUPA BERDOA DAN BAHAGIA HARI INI ✨";
-            }
-        }
-
-        function switchDay(dayId, btnElement) {
-            const contents = document.querySelectorAll('.schedule-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            document.getElementById(dayId).classList.add('active');
-            btnElement.classList.add('active');
-
-            updateRunningText(dayId);
-        }
-
+        // Otomatis Aktifkan Jadwal Sesuai Hari Real-Time (Tanpa Bisa Dipencet Manual)
         window.addEventListener('DOMContentLoaded', () => {
             const daysMap = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
             const todayIndex = new Date().getDay();
             const todayId = daysMap[todayIndex];
 
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(tab => {
-                if (tab.getAttribute('onclick').includes(todayId)) {
-                    tab.click();
-                }
-            });
+            // Sembunyikan semua jadwal & nonaktifkan tombol tab
+            document.querySelectorAll('.schedule-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Tampilkan jadwal hari ini dan aktifkan tombol indikatornya
+            document.getElementById(todayId).classList.add('active');
+            document.getElementById(`btn-${todayId}`).classList.add('active');
+
+            // Set Running Text Sesuai Hari
+            const textElement = document.getElementById('runningText');
+            if (todayId === 'sabtu' || todayId === 'minggu') {
+                textElement.textContent = "✨ CIE DIKEY LIBUR ISTIRAHAT YA JAGA KESEHATAN - KALO SEKARANG ADA KEGIATAN SEMANGAT YA JANGAN LUPA MAKAN MINUM GUD LUCKK ✨";
+            } else {
+                textElement.textContent = "✨ SEMANGAT DIKEYYY ✨ JANGAN LUPA BERDOA DAN BAHAGIA HARI INI ✨";
+            }
         });
 
+        // Background Bintang Animasi
         const sky = document.getElementById('sky');
         const starCount = 45;
 
