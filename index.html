@@ -15,7 +15,7 @@
             --text-muted: #8b949e;
             --accent-blue: #58a6ff;
             --accent-warning: #d29922;
-            --accent-error: #f85149;
+            --accent-success: #3fb950;
         }
 
         * {
@@ -43,6 +43,7 @@
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
 
         /* Status Header */
@@ -71,6 +72,12 @@
             display: inline-block;
             box-shadow: 0 0 8px var(--accent-warning);
             animation: pulse 1.5s infinite;
+        }
+
+        .status-dot.online {
+            background-color: var(--accent-success);
+            box-shadow: 0 0 8px var(--accent-success);
+            animation: none;
         }
 
         @keyframes pulse {
@@ -129,7 +136,32 @@
             margin-top: 5px;
         }
 
-        /* Informasi Prosedur */
+        .status-log.success {
+            color: var(--accent-success);
+            background: rgba(63, 185, 80, 0.1);
+            border-color: rgba(63, 185, 80, 0.3);
+        }
+
+        /* Tombol Masuk / Action */
+        .btn-action {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: var(--accent-success);
+            color: #0d1117;
+            font-weight: 700;
+            font-size: 13px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #2ea043;
+        }
+
         .info-box {
             font-size: 12px;
             color: var(--text-muted);
@@ -156,8 +188,8 @@
         <!-- Status Header -->
         <div class="status-header">
             <div class="system-badge">
-                <span class="status-dot"></span>
-                <span>SYSTEM MAINTENANCE</span>
+                <span class="status-dot" id="statusDot"></span>
+                <span id="badgeText">SYSTEM MAINTENANCE</span>
             </div>
             <div style="font-size: 11px; color: var(--text-muted);">
                 SYS_ID: HAPIDSYS-V2
@@ -166,8 +198,8 @@
 
         <!-- Header Content -->
         <div class="header-title">
-            <h1>Pemeliharaan Infrastruktur Sistem</h1>
-            <p>Silakan tunggu, sistem <strong>Hapidsys</strong> saat ini sedang menjalankan prosedur perbaikan dan optimasi jaringan secara berkala.</p>
+            <h1 id="mainHeading">Pemeliharaan Infrastruktur Sistem</h1>
+            <p id="subHeading">Silakan tunggu, sistem <strong>Hapidsys</strong> saat ini sedang menjalankan prosedur perbaikan dan optimasi jaringan secara berkala.</p>
         </div>
 
         <!-- Widget Countdown -->
@@ -177,69 +209,20 @@
             <div class="status-log" id="statusMsg">
                 <i class="fa-solid fa-spinner fa-spin"></i> Menjalankan diagnostik otomatis...
             </div>
+            <button class="btn-action" id="btnAccess" onclick="location.reload()">
+                <i class="fa-solid fa-right-to-bracket"></i> MASUK KE SISTEM HAPIDSYS
+            </button>
         </div>
 
         <!-- Deskripsi Informasi IT -->
-        <div class="info-box">
+        <div class="info-box" id="infoBox">
             <strong>Catatan Operasional:</strong><br>
-            Akses ke beberapa layanan ditangguhkan sementara demi menjaga integritas data dan keamanan sistem. Proses ini memerlukan validasi ulang secara otomatis sebelum layanan dibuka kembali.
+            Akses ke beberapa layanan ditangguhkan sementara demi menjaga integritas data dan keamanan sistem.
         </div>
 
         <!-- Footer -->
         <div class="footer-info">
             <span>&copy; 2026 Hapidsys Operations</span>
-            <span>Status: Incident Response Active</span>
+            <span id="footerStatus">Status: Incident Response Active</span>
         </div>
     </div>
-
-    <!-- Script JavaScript dengan Logika Penambahan Waktu Bertahap -->
-    <script>
-        let timeLeft = 60; // Mulai dari 1 menit (60 detik)
-        let addedTimes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]; // Daftar tambahan waktu
-        let indexAdd = 0;
-
-        const timerDisplay = document.getElementById('timer');
-        const statusMsg = document.getElementById('statusMsg');
-        const phaseTitle = document.getElementById('phaseTitle');
-
-        const techLogs = [
-            "Melakukan rekonfigurasi aturan firewall...",
-            "Memulihkan integritas basis data terdistribusi...",
-            "Menjalankan pembersihan cache & memori server...",
-            "Melakukan validasi skrip modul keamanan...",
-            "Mengoptimalkan alokasi beban trafik jaringan..."
-        ];
-
-        function updateTimer() {
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-
-            let formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            timerDisplay.textContent = formattedTime;
-
-            if (timeLeft > 0) {
-                timeLeft--;
-            } else {
-                // Ketika waktu mencapai 0, alokasikan tambahan waktu sesuai urutan (10s, 20s, ..., 100s)
-                let extraTime = addedTimes[indexAdd];
-                timeLeft = extraTime;
-
-                phaseTitle.textContent = `Perpanjangan Alokasi Waktu (+${extraTime} Detik)`;
-                statusMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Menyesuaikan kembali estimasi waktu pemulihan (+${extraTime}s)...`;
-
-                // Perbarui pesan log teknis secara acak
-                setTimeout(() => {
-                    let randomLog = techLogs[Math.floor(Math.random() * techLogs.length)];
-                    statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${randomLog}`;
-                }, 2500);
-
-                // Geser ke interval tambahan waktu berikutnya
-                indexAdd = (indexAdd + 1) % addedTimes.length;
-            }
-        }
-
-        // Jalankan timer setiap 1 detik
-        setInterval(updateTimer, 1000);
-    </script>
-</body>
-</html>
