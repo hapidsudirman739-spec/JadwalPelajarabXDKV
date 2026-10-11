@@ -1,1 +1,1 @@
-# JadwalPelajarabXDKV
+# JadwalPelajaranXDKV
