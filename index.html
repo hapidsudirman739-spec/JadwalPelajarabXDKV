@@ -3,301 +3,641 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hapidsys Infrastructure Maintenance</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Jadwal Pelajaran X DKV 3 - Deep Sky Theme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0d1117;
-            --bg-card: #161b22;
-            --border-color: #30363d;
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --accent-blue: #58a6ff;
-            --accent-warning: #d29922;
-            --accent-success: #3fb950;
+            --bg-deep: #070f2b;
+            --bg-card: rgba(19, 31, 75, 0.7);
+            --border-card: rgba(76, 201, 240, 0.25);
+            --text-main: #f0f6fc;
+            --text-muted: #8b9bb4;
+            --accent-blue: #4cc9f0;
+            --accent-glow: rgba(76, 201, 240, 0.35);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-deep);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            padding: 30px 15px;
         }
 
+        /* Latar Belakang Animasi Langit Malam & Bintang */
+        .sky-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #070f2b 0%, #1b1a55 50%, #030617 100%);
+            background-size: 400% 400%;
+            animation: skyGradient 15s ease infinite;
+        }
+
+        @keyframes skyGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px var(--accent-blue); }
+        }
+
+        /* Container Utama */
         .container {
             width: 100%;
-            max-width: 580px;
+            max-width: 540px;
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-card);
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(76, 201, 240, 0.1);
+            position: relative;
+            z-index: 1;
         }
 
-        /* Status Header */
-        .status-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .system-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-weight: 600;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-warning);
+        /* Widget Real-Time Clock & Date */
+        .realtime-widget {
+            background: rgba(10, 17, 43, 0.5);
+            border: 1px solid rgba(76, 201, 240, 0.15);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Jam Analog Mini */
+        .analog-clock {
+            width: 54px;
+            height: 54px;
+            border: 2px solid var(--accent-blue);
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--accent-warning);
-            animation: pulse 1.5s infinite;
+            position: relative;
+            background: rgba(7, 15, 43, 0.8);
+            box-shadow: 0 0 10px var(--accent-glow);
+            flex-shrink: 0;
         }
 
-        .status-dot.online {
-            background-color: var(--accent-success);
-            box-shadow: 0 0 8px var(--accent-success);
-            animation: none;
+        .center-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 4px;
         }
 
-        .header-title h1 {
-            font-size: 18px;
+        .hour-hand {
+            width: 3px;
+            height: 14px;
+            background: var(--text-main);
+            transform: translateX(-50%) rotate(0deg);
+            z-index: 2;
+        }
+
+        .minute-hand {
+            width: 2px;
+            height: 19px;
+            background: var(--accent-blue);
+            transform: translateX(-50%) rotate(0deg);
+            z-index: 3;
+        }
+
+        .second-hand {
+            width: 1px;
+            height: 22px;
+            background: #ff4d4d;
+            transform: translateX(-50%) rotate(0deg);
+            z-index: 4;
+        }
+
+        /* Info Waktu Digital & Tanggal */
+        .time-info {
+            text-align: right;
+            flex: 1;
+        }
+
+        .digital-clock {
+            font-size: 20px;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px var(--accent-glow);
+            margin-bottom: 2px;
+        }
+
+        .date-display {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Styling Running Text (Diperhalus & Diperlambat jadi 20s) */
+        .running-text-container {
+            background: rgba(10, 17, 43, 0.4);
+            border: 1px solid rgba(76, 201, 240, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 6px 0;
+            margin-bottom: 15px;
+            white-space: nowrap;
+        }
+
+        .running-text {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 6px var(--accent-glow);
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Tab Hari */
+        .day-tabs {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: rgba(10, 17, 43, 0.6);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(76, 201, 240, 0.1);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 8px 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent-blue);
+            color: #070f2b;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        /* Konten Jadwal */
+        .schedule-content {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .schedule-content.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            background: rgba(27, 42, 86, 0.45);
+            border: 1px solid rgba(76, 201, 240, 0.12);
+            padding: 12px 15px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .schedule-item:hover {
+            border-color: var(--accent-blue);
+            background: rgba(76, 201, 240, 0.1);
+        }
+
+        .schedule-item.break {
+            background: rgba(255, 255, 255, 0.03);
+            border-style: dashed;
+            border-color: rgba(139, 155, 180, 0.2);
+        }
+
+        .time-box {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            min-width: 105px;
+        }
+
+        .schedule-item.break .time-box {
+            color: var(--text-muted);
+        }
+
+        .divider {
+            color: var(--text-muted);
+            margin: 0 10px;
+            font-weight: 300;
+        }
+
+        .subject-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            flex: 1;
+        }
+
+        .schedule-item.break .subject-name {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Tampilan Hari Libur */
+        .holiday-box {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(27, 42, 86, 0.3);
+            border: 1px dashed rgba(76, 201, 240, 0.2);
+            border-radius: 16px;
+        }
+
+        .holiday-box i {
+            font-size: 36px;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+
+        .holiday-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
             margin-bottom: 6px;
         }
 
-        .header-title p {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Countdown Area */
-        .maintenance-card {
-            background: rgba(13, 17, 23, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .maintenance-card .label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        .timer-display {
-            font-size: 42px;
-            font-weight: 700;
-            color: var(--accent-blue);
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .status-log {
-            font-size: 12px;
-            color: var(--accent-warning);
-            background: rgba(210, 153, 34, 0.1);
-            border: 1px solid rgba(210, 153, 34, 0.2);
-            padding: 8px 12px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        .status-log.success {
-            color: var(--accent-success);
-            background: rgba(63, 185, 80, 0.1);
-            border-color: rgba(63, 185, 80, 0.3);
-        }
-
-        /* Tombol Masuk / Action */
-        .btn-action {
-            display: none;
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            background: var(--accent-success);
-            color: #0d1117;
-            font-weight: 700;
+        .holiday-box p {
             font-size: 13px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-action:hover {
-            background: #2ea043;
-        }
-
-        .info-box {
-            font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.6;
-            margin-top: 20px;
-            border-left: 3px solid var(--accent-blue);
-            padding-left: 12px;
         }
 
-        .footer-info {
-            margin-top: 25px;
+        /* Watermark */
+        .footer-watermark {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(76, 201, 240, 0.1);
             padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
+    <!-- Efek Animasi Langit Malam & Bintang -->
+    <div class="sky-bg" id="sky"></div>
+
     <div class="container">
-        <!-- Status Header -->
-        <div class="status-header">
-            <div class="system-badge">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="badgeText">SYSTEM MAINTENANCE</span>
+        <div class="header">
+            <h1>Jadwal Pelajaran</h1>
+            <p>X DKV 3</p>
+        </div>
+
+        <!-- Widget Jam Real-Time (Analog + Digital + Tanggal) -->
+        <div class="realtime-widget">
+            <div class="analog-clock">
+                <div class="hand hour-hand" id="hourHand"></div>
+                <div class="hand minute-hand" id="minuteHand"></div>
+                <div class="hand second-hand" id="secondHand"></div>
+                <div class="center-dot"></div>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">
-                SYS_ID: HAPIDSYS-CORE
+            <div class="time-info">
+                <div class="digital-clock" id="digitalClock">00:00:00</div>
+                <div class="date-display" id="dateDisplay">Memuat tanggal...</div>
             </div>
         </div>
 
-        <!-- Header Content -->
-        <div class="header-title">
-            <h1 id="mainHeading">Pemeliharaan Infrastruktur Sistem</h1>
-            <p id="subHeading">Silakan tunggu, sistem <strong>Hapidsys</strong> sedang mengeksekusi patch deployment dan kalibrasi server terjadwal.</p>
+        <!-- Running Text Animasi Berjalan -->
+        <div class="running-text-container">
+            <div class="running-text" id="runningText">✨ SEMANGAT DIKEYYY ✨ JANGAN LUPA BERDOA DAN BAHAGIA HARI INI ✨</div>
         </div>
 
-        <!-- Widget Countdown -->
-        <div class="maintenance-card">
-            <div class="label" id="phaseTitle">Estimasi Waktu Downtime (Countdown)</div>
-            <div class="timer-display" id="timer">02:00</div>
-            <div class="status-log" id="statusMsg">
-                <i class="fa-solid fa-spinner fa-spin"></i> Inisialisasi proses sinkronisasi node...
+        <!-- Tombol Pilihan Hari -->
+        <div class="day-tabs">
+            <button class="tab-btn" onclick="switchDay('senin', this)">Senin</button>
+            <button class="tab-btn" onclick="switchDay('selasa', this)">Selasa</button>
+            <button class="tab-btn" onclick="switchDay('rabu', this)">Rabu</button>
+            <button class="tab-btn" onclick="switchDay('kamis', this)">Kamis</button>
+            <button class="tab-btn" onclick="switchDay('jumat', this)">Jumat</button>
+            <button class="tab-btn" onclick="switchDay('sabtu', this)">Sabtu</button>
+            <button class="tab-btn" onclick="switchDay('minggu', this)">Minggu</button>
+        </div>
+
+        <!-- SENIN -->
+        <div id="senin" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">07.00 - 07.40</span><span class="divider">|</span><span class="subject-name">Upacara</span>
             </div>
-            <button class="btn-action" id="btnAccess" onclick="location.reload()">
-                <i class="fa-solid fa-right-to-bracket"></i> AKSES KEMBALI KE SISTEM
-            </button>
+            <div class="schedule-item">
+                <span class="time-box">07.40 - 10.15</span><span class="divider">|</span><span class="subject-name">Dasar-Dasar Program Keahlian</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">10.15 - 10.30</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">10.30 - 11.50</span><span class="divider">|</span><span class="subject-name">Dasar-Dasar Program Keahlian</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">11.50 - 13.10</span><span class="divider">|</span><span class="subject-name">Sejarah</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">13.10 - 13.40</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.40 - 15.00</span><span class="divider">|</span><span class="subject-name">Pendidikan Pancasila</span>
+            </div>
         </div>
 
-        <!-- Deskripsi Informasi IT -->
-        <div class="info-box" id="infoBox">
-            <strong>Protokol Pemeliharaan:</strong><br>
-            Koneksi database utama di-isolate sementara untuk mencegah write-conflict selama proses patch keamanan berlangsung.
+        <!-- SELASA -->
+        <div id="selasa" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">07.00 - 07.30</span><span class="divider">|</span><span class="subject-name">Tadarus</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">07.30 - 09.30</span><span class="divider">|</span><span class="subject-name">Pendidikan Agama</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">09.30 - 10.10</span><span class="divider">|</span><span class="subject-name">PJOK</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">10.10 - 10.30</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">10.30 - 11.50</span><span class="divider">|</span><span class="subject-name">PJOK</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">11.50 - 12.30</span><span class="divider">|</span><span class="subject-name">IPAS</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">12.30 - 13.00</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.00 - 15.00</span><span class="divider">|</span><span class="subject-name">IPAS</span>
+            </div>
         </div>
 
-        <!-- Footer -->
-        <div class="footer-info">
-            <span>&copy; 2026 Hapidsys Operations</span>
-            <span id="footerStatus">Status: Routine Maintenance Active</span>
+        <!-- RABU -->
+        <div id="rabu" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">07.00 - 07.30</span><span class="divider">|</span><span class="subject-name">Tadarus</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">07.30 - 10.10</span><span class="divider">|</span><span class="subject-name">Informatika</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">10.10 - 10.30</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">10.30 - 12.30</span><span class="divider">|</span><span class="subject-name">Dasar-Dasar Program Keahlian</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">12.30 - 13.00</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.00 - 15.00</span><span class="divider">|</span><span class="subject-name">Dasar-Dasar Program Keahlian</span>
+            </div>
+        </div>
+
+        <!-- KAMIS -->
+        <div id="kamis" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">07.00 - 07.30</span><span class="divider">|</span><span class="subject-name">Tadarus</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">07.30 - 08.50</span><span class="divider">|</span><span class="subject-name">Seni Rupa</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">08.50 - 10.10</span><span class="divider">|</span><span class="subject-name">Matematika</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">10.10 - 10.30</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">10.30 - 12.30</span><span class="divider">|</span><span class="subject-name">Bahasa Inggris</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">12.30 - 13.00</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.00 - 13.40</span><span class="divider">|</span><span class="subject-name">Bahasa Inggris</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.40 - 15.00</span><span class="divider">|</span><span class="subject-name">IPAS</span>
+            </div>
+        </div>
+
+        <!-- JUMAT -->
+        <div id="jumat" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">07.00 - 07.30</span><span class="divider">|</span><span class="subject-name">Jumat Sehat / Bersih / Rohani</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">07.30 - 08.50</span><span class="divider">|</span><span class="subject-name">Bahasa Indonesia</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">08.50 - 09.10</span><span class="divider">|</span><span class="subject-name">Istirahat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">09.10 - 10.30</span><span class="divider">|</span><span class="subject-name">Bahasa Indonesia</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">10.30 - 11.10</span><span class="divider">|</span><span class="subject-name">BK</span>
+            </div>
+            <div class="schedule-item break">
+                <span class="time-box">11.10 - 13.00</span><span class="divider">|</span><span class="subject-name">Istirahat / Sholat Jumat</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.00 - 13.40</span><span class="divider">|</span><span class="subject-name">BK</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">13.40 - 15.00</span><span class="divider">|</span><span class="subject-name">Matematika</span>
+            </div>
+        </div>
+
+        <!-- SABTU -->
+        <div id="sabtu" class="schedule-content">
+            <div class="holiday-box">
+                <i class="fa-solid fa-moon"></i>
+                <h3>Hari Sabtu</h3>
+                <p>Selamat menikmati hari libur!</p>
+            </div>
+        </div>
+
+        <!-- MINGGU -->
+        <div id="minggu" class="schedule-content">
+            <div class="holiday-box">
+                <i class="fa-solid fa-cloud-moon"></i>
+                <h3>Hari Minggu</h3>
+                <p>Selamat menikmati hari libur!</p>
+            </div>
+        </div>
+
+        <!-- Watermark -->
+        <div class="footer-watermark">
+            &copy; 2026 By Hapid
         </div>
     </div>
 
-    <!-- Script JavaScript (Cooldown Tepat 2 Menit / 120 Detik) -->
+    <!-- Script JavaScript -->
     <script>
-        let timeLeft = 120; // 2 Menit (120 Detik)
-        let timerInterval;
+        function updateRealTime() {
+            const now = new Date();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
 
-        const timerDisplay = document.getElementById('timer');
-        const statusMsg = document.getElementById('statusMsg');
-        const phaseTitle = document.getElementById('phaseTitle');
-        const statusDot = document.getElementById('statusDot');
-        const badgeText = document.getElementById('badgeText');
-        const mainHeading = document.getElementById('mainHeading');
-        const subHeading = document.getElementById('subHeading');
-        const btnAccess = document.getElementById('btnAccess');
-        const infoBox = document.getElementById('infoBox');
-        const footerStatus = document.getElementById('footerStatus');
+            const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('id-ID', options);
 
-        const systemLogs = [
-            "Melakukan kompilasi ulang modul backend...",
-            "Memvalidasi integritas checksum file sistem...",
-            "Menerapkan rule firewall dan patch keamanan terbaru...",
-            "Membersihkan cache direktori sementara (tmp)...",
-            "Melakukan ping sequence ke server cluster..."
-        ];
+            const secDeg = (now.getSeconds() / 60) * 360;
+            const minDeg = ((now.getMinutes() + now.getSeconds() / 60) / 60) * 360;
+            const hourDeg = ((now.getHours() % 12 + now.getMinutes() / 60) / 12) * 360;
 
-        function updateTimer() {
-            if (timeLeft > 0) {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('secondHand').style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+            document.getElementById('minuteHand').style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            document.getElementById('hourHand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        }
 
-                // Ganti log secara periodik setiap beberapa detik agar dinamis
-                if (timeLeft % 15 === 0) {
-                    let randomLog = systemLogs[Math.floor(Math.random() * systemLogs.length)];
-                    statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${randomLog}`;
-                }
+        setInterval(updateRealTime, 1000);
+        updateRealTime();
 
-                timeLeft--;
+        // Update Running Text Sesuai Hari
+        function updateRunningText(dayId) {
+            const textElement = document.getElementById('runningText');
+            if (dayId === 'sabtu' || dayId === 'minggu') {
+                textElement.textContent = "✨ CIE DIKEY LIBUR ISTIRAHAT YA JAGA KESEHATAN - KALO SEKARANG ADA KEGIATAN SEMANGAT YA JANGAN LUPA MAKAN MINUM GUD LUCKK ✨";
             } else {
-                // Ketika tepat 0 detik (Waktu 2 Menit Selesai)
-                clearInterval(timerInterval);
-                finishMaintenance();
+                textElement.textContent = "✨ SEMANGAT DIKEYYY ✨ JANGAN LUPA BERDOA DAN BAHAGIA HARI INI ✨";
             }
         }
 
-        function finishMaintenance() {
-            // Ubah Status ke Operational (Online)
-            statusDot.classList.add('online');
-            badgeText.textContent = "SYSTEM OPERATIONAL";
-            badgeText.style.color = "var(--accent-success)";
+        function switchDay(dayId, btnElement) {
+            const contents = document.querySelectorAll('.schedule-content');
+            contents.forEach(content => content.classList.remove('active'));
 
-            mainHeading.textContent = "Deployment & Maintenance Selesai";
-            subHeading.innerHTML = "Seluruh layanan <strong>Hapidsys</strong> telah berhasil di-deploy ulang dan berjalan secara optimal.";
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
 
-            phaseTitle.textContent = "Status Layanan Server";
-            timerDisplay.textContent = "ONLINE";
-            timerDisplay.style.color = "var(--accent-success)";
+            document.getElementById(dayId).classList.add('active');
+            btnElement.classList.add('active');
 
-            statusMsg.className = "status-log success";
-            statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Health check passed: 100% responsive.`;
-
-            infoBox.innerHTML = `<strong>Laporan Deployment:</strong><br>Semua instance aktif, koneksi database stabil, dan latensi jaringan kembali normal.`;
-            infoBox.style.borderLeftColor = "var(--accent-success)";
-
-            footerStatus.textContent = "Status: All Systems Normal";
-            
-            // Tampilkan tombol masuk kembali
-            btnAccess.style.display = "block";
+            updateRunningText(dayId);
         }
 
-        // Jalankan interval per 1 detik
-        timerInterval = setInterval(updateTimer, 1000);
+        window.addEventListener('DOMContentLoaded', () => {
+            const daysMap = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+            const todayIndex = new Date().getDay();
+            const todayId = daysMap[todayIndex];
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('onclick').includes(todayId)) {
+                    tab.click();
+                }
+            });
+        });
+
+        const sky = document.getElementById('sky');
+        const starCount = 45;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            const size = Math.random() * 2.5 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            star.style.animationDelay = `${Math.random() * 2}s`;
+            
+            sky.appendChild(star);
+        }
     </script>
 </body>
 </html>
