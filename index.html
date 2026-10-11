@@ -1,1 +1,472 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM ERROR - X DKV 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0a0000;
+            --bg-card: rgba(20, 0, 0, 0.85);
+            --border-card: rgba(255, 0, 0, 0.4);
+            --text-main: #ff3333;
+            --text-muted: #ff8080;
+            --accent-red: #ff0000;
+            --accent-glow: rgba(255, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 30px 15px;
+        }
+
+        /* Latar Belakang Matrix/Error Grid */
+        .sky-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle, #200000 0%, #050000 100%);
+            animation: bgGlitch 2s infinite;
+        }
+
+        @keyframes bgGlitch {
+            0% { opacity: 0.9; }
+            50% { opacity: 1; filter: brightness(1.2); }
+            100% { opacity: 0.9; }
+        }
+
+        /* Container Utama */
+        .container {
+            width: 100%;
+            max-width: 540px;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 2px dashed var(--accent-red);
+            border-radius: 12px;
+            padding: 30px 20px;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Error */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--accent-red);
+            animation: glitchText 1s infinite alternate;
+        }
+
+        @keyframes glitchText {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-5deg); color: #ff0000; }
+            40% { transform: skew(5deg); }
+            60% { transform: skew(-2deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        .header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        /* Widget Real-Time Clock & Date */
+        .realtime-widget {
+            background: rgba(30, 0, 0, 0.7);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .analog-clock {
+            width: 54px;
+            height: 54px;
+            border: 2px solid var(--accent-red);
+            border-radius: 50%;
+            position: relative;
+            background: #000;
+            box-shadow: 0 0 10px var(--accent-glow);
+            flex-shrink: 0;
+        }
+
+        .center-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 4px;
+        }
+
+        .hour-hand { width: 3px; height: 14px; background: #fff; z-index: 2; }
+        .minute-hand { width: 2px; height: 19px; background: var(--text-muted); z-index: 3; }
+        .second-hand { width: 1px; height: 22px; background: #ff0000; z-index: 4; }
+
+        .time-info { text-align: right; flex: 1; }
+
+        .digital-clock {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff3333;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--accent-glow);
+            margin-bottom: 2px;
+        }
+
+        .date-display {
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        /* Running Text Warning */
+        .running-text-container {
+            background: rgba(40, 0, 0, 0.6);
+            border: 1px solid var(--accent-red);
+            border-radius: 6px;
+            overflow: hidden;
+            padding: 6px 0;
+            margin-bottom: 15px;
+            white-space: nowrap;
+        }
+
+        .running-text {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff4d4d;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: marquee 12s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Tab Hari */
+        .day-tabs {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: rgba(20, 0, 0, 0.8);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border-card);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent-red);
+            color: #000;
+            box-shadow: 0 0 10px var(--accent-glow);
+            font-weight: bold;
+        }
+
+        /* Konten Error */
+        .schedule-content {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-content.active {
+            display: flex;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            background: rgba(40, 0, 0, 0.4);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 12px 15px;
+            border-radius: 6px;
+        }
+
+        .time-box {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff8080;
+            min-width: 105px;
+        }
+
+        .divider {
+            color: var(--accent-red);
+            margin: 0 10px;
+        }
+
+        .subject-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            flex: 1;
+            text-transform: uppercase;
+        }
+
+        /* Tampilan Virus Alert Box */
+        .holiday-box {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(50, 0, 0, 0.5);
+            border: 1px dashed var(--accent-red);
+            border-radius: 8px;
+        }
+
+        .holiday-box i {
+            font-size: 40px;
+            color: var(--accent-red);
+            margin-bottom: 12px;
+            animation: blinkIcon 0.8s infinite alternate;
+        }
+
+        @keyframes blinkIcon {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; text-shadow: 0 0 15px red; }
+        }
+
+        .holiday-box h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .holiday-box p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Watermark */
+        .footer-watermark {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sky-bg"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>[!] SYSTEM_FAILURE [!]</h1>
+            <p>X DKV 3 - INFECTED</p>
+        </div>
+
+        <!-- Widget Real-Time Clock -->
+        <div class="realtime-widget">
+            <div class="analog-clock">
+                <div class="hand hour-hand" id="hourHand"></div>
+                <div class="hand minute-hand" id="minuteHand"></div>
+                <div class="hand second-hand" id="secondHand"></div>
+                <div class="center-dot"></div>
+            </div>
+            <div class="time-info">
+                <div class="digital-clock" id="digitalClock">00:00:00</div>
+                <div class="date-display" id="dateDisplay">CRITICAL ERROR</div>
+            </div>
+        </div>
+
+        <!-- Running Text Error -->
+        <div class="running-text-container">
+            <div class="running-text" id="runningText">⚠️ WARNING: SYSTEM COMPROMISED BY MALWARE ⚠️ ALL DATA ENCRYPTED ⚠️ DIKEYYY_HACKED ⚠️</div>
+        </div>
+
+        <!-- Tombol Pilihan Hari -->
+        <div class="day-tabs">
+            <button class="tab-btn" onclick="switchDay('senin', this)">Senin</button>
+            <button class="tab-btn" onclick="switchDay('selasa', this)">Selasa</button>
+            <button class="tab-btn" onclick="switchDay('rabu', this)">Rabu</button>
+            <button class="tab-btn" onclick="switchDay('kamis', this)">Kamis</button>
+            <button class="tab-btn" onclick="switchDay('jumat', this)">Jumat</button>
+            <button class="tab-btn" onclick="switchDay('sabtu', this)">Sabtu</button>
+            <button class="tab-btn" onclick="switchDay('minggu', this)">Minggu</button>
+        </div>
+
+        <!-- SENIN -->
+        <div id="senin" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">ERROR_01</span><span class="divider">|</span><span class="subject-name">Trojan.Horse.Detected</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">ERROR_02</span><span class="divider">|</span><span class="subject-name">System Memory Corrupted</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">ERROR_03</span><span class="divider">|</span><span class="subject-name">Data Leak in Progress...</span>
+            </div>
+        </div>
+
+        <!-- SELASA -->
+        <div id="selasa" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">ERROR_01</span><span class="divider">|</span><span class="subject-name">Ransomware Encryption Active</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">ERROR_02</span><span class="divider">|</span><span class="subject-name">Access Denied: Root Required</span>
+            </div>
+        </div>
+
+        <!-- RABU -->
+        <div id="rabu" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">ERROR_01</span><span class="divider">|</span><span class="subject-name">Kernel Panic: 0x000000ED</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">ERROR_02</span><span class="divider">|</span><span class="subject-name">Firewall Disabled by Admin</span>
+            </div>
+        </div>
+
+        <!-- KAMIS -->
+        <div id="kamis" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">ERROR_01</span><span class="divider">|</span><span class="subject-name">CPU Overheated: 104C</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time-box">ERROR_02</span><span class="divider">|</span><span class="subject-name">Malware Payload Executing</span>
+            </div>
+        </div>
+
+        <!-- JUMAT -->
+        <div id="jumat" class="schedule-content">
+            <div class="schedule-item">
+                <span class="time-box">ERROR_01</span><span class="divider">|</span><span class="subject-name">Blue Screen of Death Imminent</span>
+            </div>
+        </div>
+
+        <!-- SABTU -->
+        <div id="sabtu" class="schedule-content">
+            <div class="holiday-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h3>SYSTEM QUARANTINE</h3>
+                <p>All schedules deleted by virus.</p>
+            </div>
+        </div>
+
+        <!-- MINGGU -->
+        <div id="minggu" class="schedule-content">
+            <div class="holiday-box">
+                <i class="fa-solid fa-skull"></i>
+                <h3>FATAL ERROR</h3>
+                <p>Please reboot your device.</p>
+            </div>
+        </div>
+
+        <!-- Watermark -->
+        <div class="footer-watermark">
+            &copy; 2026 :: SYSTEM BREACHED BY HAPID
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        function updateRealTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
+
+            const secDeg = (now.getSeconds() / 60) * 360;
+            const minDeg = ((now.getMinutes() + now.getSeconds() / 60) / 60) * 360;
+            const hourDeg = ((now.getHours() % 12 + now.getMinutes() / 60) / 12) * 360;
+
+            document.getElementById('secondHand').style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+            document.getElementById('minuteHand').style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            document.getElementById('hourHand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        }
+
+        setInterval(updateRealTime, 1000);
+        updateRealTime();
+
+        function switchDay(dayId, btnElement) {
+            const contents = document.querySelectorAll('.schedule-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(dayId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const daysMap = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+            const todayIndex = new Date().getDay();
+            const todayId = daysMap[todayIndex];
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('onclick').includes(todayId)) {
+                    tab.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
