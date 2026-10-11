@@ -192,37 +192,112 @@
                 <span id="badgeText">SYSTEM MAINTENANCE</span>
             </div>
             <div style="font-size: 11px; color: var(--text-muted);">
-                SYS_ID: HAPIDSYS-V2
+                SYS_ID: HAPIDSYS-CORE
             </div>
         </div>
 
         <!-- Header Content -->
         <div class="header-title">
             <h1 id="mainHeading">Pemeliharaan Infrastruktur Sistem</h1>
-            <p id="subHeading">Silakan tunggu, sistem <strong>Hapidsys</strong> saat ini sedang menjalankan prosedur perbaikan dan optimasi jaringan secara berkala.</p>
+            <p id="subHeading">Silakan tunggu, sistem <strong>Hapidsys</strong> sedang mengeksekusi patch deployment dan kalibrasi server terjadwal.</p>
         </div>
 
         <!-- Widget Countdown -->
         <div class="maintenance-card">
-            <div class="label" id="phaseTitle">Estimasi Waktu Selesai (Proses Sinkronisasi)</div>
-            <div class="timer-display" id="timer">01:00</div>
+            <div class="label" id="phaseTitle">Estimasi Waktu Downtime (Countdown)</div>
+            <div class="timer-display" id="timer">02:00</div>
             <div class="status-log" id="statusMsg">
-                <i class="fa-solid fa-spinner fa-spin"></i> Menjalankan diagnostik otomatis...
+                <i class="fa-solid fa-spinner fa-spin"></i> Inisialisasi proses sinkronisasi node...
             </div>
             <button class="btn-action" id="btnAccess" onclick="location.reload()">
-                <i class="fa-solid fa-right-to-bracket"></i> MASUK KE SISTEM HAPIDSYS
+                <i class="fa-solid fa-right-to-bracket"></i> AKSES KEMBALI KE SISTEM
             </button>
         </div>
 
         <!-- Deskripsi Informasi IT -->
         <div class="info-box" id="infoBox">
-            <strong>Catatan Operasional:</strong><br>
-            Akses ke beberapa layanan ditangguhkan sementara demi menjaga integritas data dan keamanan sistem.
+            <strong>Protokol Pemeliharaan:</strong><br>
+            Koneksi database utama di-isolate sementara untuk mencegah write-conflict selama proses patch keamanan berlangsung.
         </div>
 
         <!-- Footer -->
         <div class="footer-info">
             <span>&copy; 2026 Hapidsys Operations</span>
-            <span id="footerStatus">Status: Incident Response Active</span>
+            <span id="footerStatus">Status: Routine Maintenance Active</span>
         </div>
     </div>
+
+    <!-- Script JavaScript (Cooldown Tepat 2 Menit / 120 Detik) -->
+    <script>
+        let timeLeft = 120; // 2 Menit (120 Detik)
+        let timerInterval;
+
+        const timerDisplay = document.getElementById('timer');
+        const statusMsg = document.getElementById('statusMsg');
+        const phaseTitle = document.getElementById('phaseTitle');
+        const statusDot = document.getElementById('statusDot');
+        const badgeText = document.getElementById('badgeText');
+        const mainHeading = document.getElementById('mainHeading');
+        const subHeading = document.getElementById('subHeading');
+        const btnAccess = document.getElementById('btnAccess');
+        const infoBox = document.getElementById('infoBox');
+        const footerStatus = document.getElementById('footerStatus');
+
+        const systemLogs = [
+            "Melakukan kompilasi ulang modul backend...",
+            "Memvalidasi integritas checksum file sistem...",
+            "Menerapkan rule firewall dan patch keamanan terbaru...",
+            "Membersihkan cache direktori sementara (tmp)...",
+            "Melakukan ping sequence ke server cluster..."
+        ];
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                // Ganti log secara periodik setiap beberapa detik agar dinamis
+                if (timeLeft % 15 === 0) {
+                    let randomLog = systemLogs[Math.floor(Math.random() * systemLogs.length)];
+                    statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${randomLog}`;
+                }
+
+                timeLeft--;
+            } else {
+                // Ketika tepat 0 detik (Waktu 2 Menit Selesai)
+                clearInterval(timerInterval);
+                finishMaintenance();
+            }
+        }
+
+        function finishMaintenance() {
+            // Ubah Status ke Operational (Online)
+            statusDot.classList.add('online');
+            badgeText.textContent = "SYSTEM OPERATIONAL";
+            badgeText.style.color = "var(--accent-success)";
+
+            mainHeading.textContent = "Deployment & Maintenance Selesai";
+            subHeading.innerHTML = "Seluruh layanan <strong>Hapidsys</strong> telah berhasil di-deploy ulang dan berjalan secara optimal.";
+
+            phaseTitle.textContent = "Status Layanan Server";
+            timerDisplay.textContent = "ONLINE";
+            timerDisplay.style.color = "var(--accent-success)";
+
+            statusMsg.className = "status-log success";
+            statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Health check passed: 100% responsive.`;
+
+            infoBox.innerHTML = `<strong>Laporan Deployment:</strong><br>Semua instance aktif, koneksi database stabil, dan latensi jaringan kembali normal.`;
+            infoBox.style.borderLeftColor = "var(--accent-success)";
+
+            footerStatus.textContent = "Status: All Systems Normal";
+            
+            // Tampilkan tombol masuk kembali
+            btnAccess.style.display = "block";
+        }
+
+        // Jalankan interval per 1 detik
+        timerInterval = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
